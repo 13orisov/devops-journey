@@ -80,12 +80,15 @@
 - Доступная память: 1,5 → 3,4 ГБ
 
 ## Главные команды недели
-adduser / usermod -aG sudo # пользователь
-ssh-keygen -t ed25519 # ключ
-sshd -t / sshd -T # проверка конфига SSH
-ufw default deny incoming # файрвол
-fail2ban-client -t / status sshd # fail2ban
-journalctl -u <сервис> # логи сервиса
-ps aux --sort=-%mem # кто ест память
-docker compose down -v # снести стек с томами
-crontab -e / crontab -l # расписание
+
+```
+adduser / usermod -aG sudo         # пользователь
+ssh-keygen -t ed25519              # ключ
+sshd -t / sshd -T                  # проверка конфига SSH
+ufw default deny incoming          # файрвол
+fail2ban-client -t / status sshd   # fail2ban
+journalctl -u <сервис>             # логи сервиса
+ps aux --sort=-%mem                # кто ест память
+docker compose down -v             # снести стек с томами
+crontab -e / crontab -l            # расписание
+```
