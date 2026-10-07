@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Алексей Борисов — путь в DevOps</title>
+<meta name="description" content="Алексей Борисов: из техподдержки в DevOps. Собственный сервер, маршрут из восьми этапов и журнал каждого шага на GitHub.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#f5f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#171a21" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://borisov-devops.ru/">
+<meta property="og:title" content="Алексей Борисов — путь в DevOps">
+<meta property="og:description" content="Собственный сервер, маршрут из восьми этапов и журнал каждого шага.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='11' fill='%23ffffff' stroke='%238b3f8f' stroke-width='6'/%3E%3C/svg%3E">
+<style>
+  /* Цвета: светлая и тёмная тема. Фиолетовый — цвет «ветки» маршрута. */
+  :root {
+    --paper: #f5f6f8;
+    --ink: #16181d;
+    --muted: #5a6070;
+    --line: #8b3f8f;
+    --line-ink: #ffffff;
+    --rail: #c3c7d0;   /* пунктир будущих перегонов */
+    --stop: #868c98;   /* кольцо будущей станции, пустой чекбокс */
+    --soft: #e4e6ec;
+    --m: 28px;         /* размер станции на схеме */
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --paper: #171a21;
+      --ink: #e9ebf1;
+      --muted: #9ba2b2;
+      --line: #c47ac8;
+      --line-ink: #171a21;
+      --rail: #4a5060;
+      --stop: #7d8494;
+      --soft: #2a2e3a;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 4.5rem 1rem 3rem; }
+
+  a { color: inherit; text-decoration-color: var(--line); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+  a:hover { color: var(--line); }
+  :focus-visible { outline: 3px solid var(--line); outline-offset: 3px; border-radius: 6px; }
+
+  p { margin: 0 0 1rem; max-width: 62ch; }
+  p, li, dd { text-wrap: pretty; }
+  h1, h2, h3 { text-wrap: balance; }
+  .muted { color: var(--muted); }
+  .nowrap { white-space: nowrap; }
+
+  /* Шапка */
+  h1 {
+    font-size: clamp(2.6rem, 9vw, 4.4rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+    font-weight: 800;
+    margin: 0 0 1.25rem;
+  }
+  .lead { font-size: clamp(1.2rem, 3vw, 1.45rem); line-height: 1.4; max-width: 40ch; text-wrap: balance; }
+  .nowline {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+    margin-top: 0.25rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .pip {
+    flex: none;
+    margin-top: calc((1.6em - 14px) / 2); /* по центру первой строки */
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 4px solid var(--line);
+    background: var(--paper);
+  }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.75rem; }
+  .btn {
+    display: inline-block;
+    padding: 0.7rem 1.2rem;
+    border-radius: 999px;
+    border: 2px solid var(--line);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .btn-main { background: var(--line); color: var(--line-ink); }
+  .btn-main:hover { color: var(--line-ink); filter: brightness(1.1); }
+  .btn-alt:hover { background: var(--soft); color: var(--ink); }
+
+  /* Разделы */
+  section { margin-top: 4.5rem; }
+  h2 { font-size: 1.65rem; line-height: 1.2; letter-spacing: -0.015em; font-weight: 750; margin: 0 0 0.5rem; }
+  h3 { font-size: 1.2rem; line-height: 1.3; font-weight: 700; margin: 0; }
+  .meta { margin: 0.15rem 0 0.6rem; color: var(--muted); font-size: 0.95rem; }
+  .facts { margin: 0.5rem 0 0; padding-left: 1.15rem; max-width: 62ch; list-style: disc; }
+  .facts li { margin: 0.35rem 0; }
+  .after-list { margin-top: 1rem; }
+
+  /* Маршрут: схема линии метро */
+  .route { list-style: none; margin: 2.25rem 0 0; padding: 0; }
+  .stop { position: relative; padding: 0 0 2.25rem 3.25rem; }
+  .stop:last-child { padding-bottom: 0; }
+  .stop::before { /* перегон до следующей станции */
+    content: "";
+    position: absolute;
+    left: calc(var(--m) / 2 - 3px);
+    width: 6px;
+    top: calc(var(--m) / 2 + 0.15rem);
+    bottom: calc(-1 * (var(--m) / 2 + 0.15rem));
+    background: repeating-linear-gradient(to bottom, var(--rail) 0 8px, transparent 8px 14px);
+  }
+  .stop.done::before { background: var(--line); }
+  .stop:last-child::before { display: none; }
+  .dot {
+    position: absolute;
+    left: 0;
+    top: 0.15rem;
+    width: var(--m);
+    height: var(--m);
+    display: grid;
+    place-items: center;
+  }
+  .dot::before {
+    content: "";
+    position: relative;
+    z-index: 1;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 4px solid var(--stop);
+    background: var(--paper);
+  }
+  .done .dot::before { width: 22px; height: 22px; background: var(--line); border-color: var(--line); }
+  .now .dot::before { width: 28px; height: 28px; border: 7px solid var(--line); }
+  .now .dot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    border: 3px solid var(--line);
+    animation: ping 2.4s ease-out infinite;
+  }
+  @keyframes ping {
+    0% { transform: scale(1); opacity: 0.6; }
+    80%, 100% { transform: scale(1.9); opacity: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .now .dot::after { animation: none; opacity: 0; }
+  }
+  .later h3 { font-weight: 600; }
+  .badge {
+    display: inline-block;
+    margin-right: 0.35rem;
+    padding: 0.05rem 0.6rem;
+    border-radius: 999px;
+    background: var(--line);
+    color: var(--line-ink);
+    font-weight: 600;
+    font-size: 0.85rem;
+  }
+
+  /* Чек-лист текущего этапа */
+  .check { list-style: none; margin: 0.5rem 0 0; padding: 0; }
+  .check li { position: relative; padding-left: 1.85rem; margin: 0.4rem 0; }
+  .check li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.25em;
+    width: 1.1rem;
+    height: 1.1rem;
+    border-radius: 5px;
+    border: 2px solid var(--stop);
+  }
+  .check li.ok::before { background: var(--line); border-color: var(--line); }
+  .check li.ok::after {
+    content: "";
+    position: absolute;
+    left: 0.4rem;
+    top: 0.42em;
+    width: 0.32rem;
+    height: 0.6rem;
+    border: solid var(--line-ink);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  /* Инструменты */
+  .stack { margin: 1.25rem 0 0; display: grid; grid-template-columns: 12.5rem 1fr; gap: 0.6rem 1.5rem; }
+  .stack dt { font-weight: 700; }
+  .stack dd { margin: 0; }
+
+  footer { margin-top: 4.5rem; padding-top: 1.5rem; border-top: 2px solid var(--soft); }
+  footer p { margin: 0 0 0.4rem; }
+
+  .sr-only {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+
+  @media (max-width: 560px) {
+    .wrap { padding-top: 3rem; }
+    section { margin-top: 3.5rem; }
+    .stop { padding-left: 2.75rem; }
+    .stack { grid-template-columns: 1fr; gap: 0.15rem; }
+    .stack dd { margin-bottom: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<main class="wrap">
+
+  <header>
+    <h1>Алексей Борисов</h1>
+    <p class="lead">Специалист техподдержки второй&nbsp;линии. Перехожу в&nbsp;DevOps, следующая цель&nbsp;— DevSecOps.</p>
+    <p>Учусь на&nbsp;собственном сервере и&nbsp;в&nbsp;открытую: маршрут из&nbsp;восьми этапов, по&nbsp;каждому&nbsp;— журнал в&nbsp;публичном репозитории, включая то, что сломалось, и&nbsp;как я&nbsp;это чинил.</p>
+    <a class="nowline" href="#route"><span class="pip" aria-hidden="true"></span><span>Сейчас: этап 2 из&nbsp;8, <span class="nowrap">веб-сервер</span> и&nbsp;HTTPS</span></a>
+    <div class="actions">
+      <a class="btn btn-main" href="https://github.com/YOUR_GITHUB/devops-journey">Открыть репозиторий</a>
+      <a class="btn btn-alt" href="https://t.me/YOUR_TELEGRAM">Написать в Telegram</a>
+    </div>
+  </header>
+
+  <section id="route" aria-labelledby="route-title">
+    <h2 id="route-title">Маршрут</h2>
+    <p class="muted">Восемь станций с&nbsp;сентября по&nbsp;декабрь 2026 года. Теорию учу по&nbsp;дороге на&nbsp;работу, поэтому маршрут нарисован как ветка метро.</p>
+
+    <ol class="route">
+      <li class="stop done">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Базовая защита сервера</h3>
+        <p class="meta">Пройдено, сентябрь–октябрь</p>
+        <ul class="facts">
+          <li>Вход по SSH только по ключу ed25519, root и пароли запрещены.</li>
+          <li>Фаервол ufw: всё входящее закрыто по умолчанию, открыто только нужное.</li>
+          <li>Боты пытаются войти около 1&nbsp;300 раз в сутки. fail2ban банит адрес на час после пяти неудачных попыток за 10 минут.</li>
+          <li>Обновления безопасности ставятся сами через unattended-upgrades.</li>
+          <li>Удалил Wazuh, который съедал память: доступно 3,4&nbsp;ГБ вместо 1,5. Заодно убрал файлы с паролями, которые оставил его установщик.</li>
+          <li>Ежедневный бэкап конфигов по cron в 03:00: хранение 7 дней, лог каждого запуска.</li>
+        </ul>
+      </li>
+
+      <li class="stop now" aria-current="step">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Веб-сервер и HTTPS</h3>
+        <p class="meta"><span class="badge">Вы здесь</span>октябрь</p>
+        <ul class="check">
+          <li class="ok">Домен и DNS-записи<span class="sr-only"> — готово</span></li>
+          <li class="ok">nginx и этот сайт<span class="sr-only"> — готово</span></li>
+          <li>HTTPS от Let's Encrypt с автопродлением<span class="sr-only"> — в работе</span></li>
+          <li>Редирект с HTTP на HTTPS<span class="sr-only"> — в работе</span></li>
+        </ul>
+      </li>
+
+      <li class="stop later">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Контейнеры</h3>
+        <p class="meta">Docker и Docker Compose, октябрь</p>
+      </li>
+
+      <li class="stop later">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>CI/CD</h3>
+        <p class="meta">GitHub Actions, проверка образов сканером Trivy, автодеплой, октябрь–ноябрь</p>
+      </li>
+
+      <li class="stop later">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Инфраструктура как код</h3>
+        <p class="meta">Terraform и Ansible, ноябрь</p>
+      </li>
+
+      <li class="stop later">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Мониторинг</h3>
+        <p class="meta">Prometheus, Grafana и алерты в Telegram, ноябрь</p>
+      </li>
+
+      <li class="stop later">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Kubernetes</h3>
+        <p class="meta">k3s и Helm, декабрь</p>
+      </li>
+
+      <li class="stop later">
+        <span class="dot" aria-hidden="true"></span>
+        <h3>Портфолио</h3>
+        <p class="meta">Финальная сборка репозитория и этого сайта, декабрь. Конечная.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="work-title">
+    <h2 id="work-title">Опыт</h2>
+    <h3>Специалист техподдержки второй линии</h3>
+    <p class="meta">Сейчас</p>
+    <ul class="facts">
+      <li>С января 2026 года закрыл больше 2&nbsp;000 заявок в Zammad. На 87% заявок с портала отреагировал в течение часа.</li>
+      <li>55 инфраструктурных задач: SSL-сертификаты, DNS, Docker, Cloudflare, перенос пользователей на новые серверы, доступы к GitLab и Airflow.</li>
+      <li>Выдача и настройка техники, доступы, онбординг и увольнения сотрудников, ЭЦП.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="tools-title">
+    <h2 id="tools-title">Инструменты</h2>
+    <dl class="stack">
+      <dt>Работаю с ними</dt>
+      <dd>Linux (Ubuntu), bash, SSH, cron, Git и GitHub, ufw, fail2ban, nginx, DNS, Cloudflare</dd>
+      <dt>Изучаю сейчас</dt>
+      <dd>Сети: IP-адресация, подсети, маршрутизация. HTTPS и TLS</dd>
+      <dt>Дальше по маршруту</dt>
+      <dd>Docker, GitHub Actions, Trivy, Terraform, Ansible, Prometheus, Grafana, Kubernetes, Helm</dd>
+    </dl>
+  </section>
+
+  <section aria-labelledby="site-title">
+    <h2 id="site-title">Как устроен этот сайт</h2>
+    <ul class="facts">
+      <li>Облачный сервер на Ubuntu 24.04 LTS, который я настраиваю и обслуживаю сам.</li>
+      <li>nginx отдаёт один HTML-файл: без JavaScript, внешних шрифтов и счётчиков.</li>
+      <li>HTTPS от Let's Encrypt с автопродлением подключаю на этой неделе.</li>
+      <li>Пока выкладываю обновления вручную. На этапе CI/CD сайт начнёт обновляться сам после каждого коммита.</li>
+    </ul>
+    <p class="after-list">Конфиги и журнал каждого этапа лежат в <a href="https://github.com/YOUR_GITHUB/devops-journey">репозитории devops-journey</a>.</p>
+  </section>
+
+  <footer>
+    <p>Связаться со мной проще всего в <a href="https://t.me/YOUR_TELEGRAM">Telegram</a>. Код и журнал — на <a href="https://github.com/YOUR_GITHUB">GitHub</a>.</p>
+    <p class="muted">Обновлено 7 октября 2026 года.</p>
+  </footer>
+
+</main>
+</body>
+</html>
