@@ -227,10 +227,10 @@
     <h1>Алексей Борисов</h1>
     <p class="lead">Специалист техподдержки второй&nbsp;линии. Перехожу в&nbsp;DevOps, следующая цель&nbsp;— DevSecOps.</p>
     <p>Учусь на&nbsp;собственном сервере и&nbsp;в&nbsp;открытую: маршрут из&nbsp;восьми этапов, по&nbsp;каждому&nbsp;— журнал в&nbsp;публичном репозитории, включая то, что сломалось, и&nbsp;как я&nbsp;это чинил.</p>
-    <a class="nowline" href="#route"><span class="pip" aria-hidden="true"></span><span>Сейчас: этап 2 из&nbsp;8, <span class="nowrap">веб-сервер</span> и&nbsp;HTTPS</span></a>
+    <a class="nowline" href="#route"><span class="pip" aria-hidden="true"></span><span>Сейчас: этап 3 из&nbsp;8, контейнеры</span></a>
     <div class="actions">
-      <a class="btn btn-main" href="https://github.com/YOUR_GITHUB/devops-journey">Открыть репозиторий</a>
-      <a class="btn btn-alt" href="https://t.me/YOUR_TELEGRAM">Написать в Telegram</a>
+      <a class="btn btn-main" href="https://github.com/13orisov/devops-journey">Открыть репозиторий</a>
+      <a class="btn btn-alt" href="https://t.me/younglexus">Написать в Telegram</a>
     </div>
   </header>
 
@@ -253,22 +253,28 @@
         </ul>
       </li>
 
-      <li class="stop now" aria-current="step">
+      <li class="stop done">
         <span class="dot" aria-hidden="true"></span>
         <h3>Веб-сервер и HTTPS</h3>
-        <p class="meta"><span class="badge">Вы здесь</span>октябрь</p>
-        <ul class="check">
-          <li class="ok">Домен и DNS-записи<span class="sr-only"> — готово</span></li>
-          <li class="ok">nginx и этот сайт<span class="sr-only"> — готово</span></li>
-          <li>HTTPS от Let's Encrypt с автопродлением<span class="sr-only"> — в работе</span></li>
-          <li>Редирект с HTTP на HTTPS<span class="sr-only"> — в работе</span></li>
+        <p class="meta">Пройдено, октябрь</p>
+        <ul class="facts">
+          <li>Свой домен, DNS-записи для корня и www.</li>
+          <li>nginx с отдельным server block. Перед каждым reload проверяю конфиг через nginx -t.</li>
+          <li>HTTPS от Let's Encrypt, редирект с HTTP на HTTPS. Сертификат продлевается сам по таймеру systemd.</li>
+          <li>Сайт выкладываю из репозитория по SSH, конфиги лежат там же.</li>
+          <li>Доработал бэкап: архивы доступны только root, в них попали nginx, сертификаты, сам скрипт и расписание cron.</li>
         </ul>
       </li>
 
-      <li class="stop later">
+      <li class="stop now" aria-current="step">
         <span class="dot" aria-hidden="true"></span>
         <h3>Контейнеры</h3>
-        <p class="meta">Docker и Docker Compose, октябрь</p>
+        <p class="meta"><span class="badge">Вы здесь</span>Docker и Docker Compose, октябрь</p>
+        <ul class="check">
+          <li>Основы Docker: образы, контейнеры, тома<span class="sr-only"> — в работе</span></li>
+          <li>Этот сайт в контейнере<span class="sr-only"> — в работе</span></li>
+          <li>Docker Compose<span class="sr-only"> — в работе</span></li>
+        </ul>
       </li>
 
       <li class="stop later">
@@ -318,11 +324,11 @@
     <h2 id="tools-title">Инструменты</h2>
     <dl class="stack">
       <dt>Работаю с ними</dt>
-      <dd>Linux (Ubuntu), bash, SSH, cron, Git и GitHub, ufw, fail2ban, nginx, DNS, Cloudflare</dd>
+      <dd>Linux (Ubuntu), bash, SSH, cron, Git и GitHub, ufw, fail2ban, nginx, Let's Encrypt, DNS, Cloudflare</dd>
       <dt>Изучаю сейчас</dt>
-      <dd>Сети: IP-адресация, подсети, маршрутизация. HTTPS и TLS</dd>
+      <dd>Docker. Сети: IP-адресация, подсети, маршрутизация</dd>
       <dt>Дальше по маршруту</dt>
-      <dd>Docker, GitHub Actions, Trivy, Terraform, Ansible, Prometheus, Grafana, Kubernetes, Helm</dd>
+      <dd>GitHub Actions, Trivy, Terraform, Ansible, Prometheus, Grafana, Kubernetes, Helm</dd>
     </dl>
   </section>
 
@@ -331,15 +337,15 @@
     <ul class="facts">
       <li>Облачный сервер на Ubuntu 24.04 LTS, который я настраиваю и обслуживаю сам.</li>
       <li>nginx отдаёт один HTML-файл: без JavaScript, внешних шрифтов и счётчиков.</li>
-      <li>HTTPS от Let's Encrypt с автопродлением подключаю на этой неделе.</li>
+      <li>HTTPS от Let's Encrypt, сертификат продлевается автоматически.</li>
       <li>Пока выкладываю обновления вручную. На этапе CI/CD сайт начнёт обновляться сам после каждого коммита.</li>
     </ul>
-    <p class="after-list">Конфиги и журнал каждого этапа лежат в <a href="https://github.com/YOUR_GITHUB/devops-journey">репозитории devops-journey</a>.</p>
+    <p class="after-list">Конфиги и журнал каждого этапа лежат в <a href="https://github.com/13orisov/devops-journey">репозитории devops-journey</a>.</p>
   </section>
 
   <footer>
-    <p>Связаться со мной проще всего в <a href="https://t.me/YOUR_TELEGRAM">Telegram</a>. Код и журнал — на <a href="https://github.com/YOUR_GITHUB">GitHub</a>.</p>
-    <p class="muted">Обновлено 7 октября 2026 года.</p>
+    <p>Связаться со мной проще всего в <a href="https://t.me/younglexus">Telegram</a>. Код и журнал — на <a href="https://github.com/13orisov">GitHub</a>.</p>
+    <p class="muted">Обновлено 19 октября 2026 года.</p>
   </footer>
 
 </main>
