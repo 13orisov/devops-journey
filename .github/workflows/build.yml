@@ -15,8 +15,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Lint Dockerfile (hadolint)
+        run: docker run --rm -i hadolint/hadolint < site/Dockerfile
+
       - name: Build image
         run: docker build -t site:${{ github.sha }} site
 
-      - name: Show image
-        run: docker images site
+      - name: Smoke test
+        run: |
+          docker run -d --name site -p 8080:80 site:${{ github.sha }}
+          sleep 3
+          curl -sS -I http://127.0.0.1:8080 | head -1
+          curl -sS http://127.0.0.1:8080 | grep -q "</html>"
+          echo "Smoke test passed"
+
+      - name: Container logs
+        if: always()
+        run: docker logs site || true
