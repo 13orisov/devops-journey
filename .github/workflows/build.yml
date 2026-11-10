@@ -8,26 +8,46 @@ on:
       - ".github/workflows/build.yml"
   workflow_dispatch:
 
+# Токен по умолчанию может только читать репозиторий
+permissions:
+  contents: read
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Lint Dockerfile (hadolint)
         run: docker run --rm -i hadolint/hadolint < site/Dockerfile
 
       - name: Build image
-        run: docker build -t site:${{ github.sha }} site
+        run: docker build --pull -t site:${{ github.sha }} site
 
       - name: Smoke test
         run: |
           docker run -d --name site -p 8080:80 site:${{ github.sha }}
           sleep 3
-          curl -sS -I http://127.0.0.1:8080 | head -1
-          curl -sS http://127.0.0.1:8080 | grep -q "</html>"
+          code=$(curl -sS -o /dev/null -w '%{http_code}' http://127.0.0.1:8080)
+          echo "HTTP $code"
+          test "$code" = "200"
+          curl -fsS http://127.0.0.1:8080 -o page.html
+          grep -qF "borisov-devops.ru" page.html
           echo "Smoke test passed"
+
+      - name: Scan image (Trivy)
+        uses: aquasecurity/trivy-action@a9c7b0f06e461e9d4b4d1711f154ee024b8d7ab8 # v0.36.0
+        with:
+          version: v0.76.1
+          image-ref: site:${{ github.sha }}
+          format: table
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: "1"
 
       - name: Container logs
         if: always()
